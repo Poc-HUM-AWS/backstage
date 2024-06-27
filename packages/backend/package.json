@@ -34,6 +34,8 @@
     "@backstage/plugin-proxy-backend": "^0.5.2",
     "@backstage/plugin-scaffolder-backend": "^1.22.11",
     "@backstage/plugin-scaffolder-backend-module-github": "^0.3.2",
+    "@backstage/plugin-scaffolder-backend-module-azure": "^0.1.13",
+
     "@backstage/plugin-search-backend": "^1.5.13",
     "@backstage/plugin-search-backend-module-catalog": "^0.1.27",
     "@backstage/plugin-search-backend-module-techdocs": "^0.1.26",
