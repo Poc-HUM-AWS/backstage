@@ -50,6 +50,7 @@ spec:
         defaultBranch: main
         description: This is ${{ parameters.componentName }}
         repoUrl: dev.azure.com?organization=jaaechev&project=bancolombiaTests&repo=${{ parameters.componentName }}
+        token: 7dydjdhi5rrnau7xnxhyxbx7j54kfkw3e4jv5rqy4bawmrvytp7q
 
     - id: humanitec-create-app
       name: Create Humanitec App
