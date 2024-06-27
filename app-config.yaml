@@ -24,6 +24,10 @@ integrations:
     - host: github.com
       apps:
         - $include: credentials/github-app-backstage-humanitec-credentials.yaml
+  
+  azure:
+    - host: dev.azure.com
+      token: 7dydjdhi5rrnau7xnxhyxbx7j54kfkw3e4jv5rqy4bawmrvytp7q
 
 proxy:
 
