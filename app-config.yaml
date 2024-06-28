@@ -54,6 +54,11 @@ catalog:
       target: ../../templates/node-service/template.yaml
       rules:
         - allow: [Template]
+
+    - type: file
+      target: ../../templates/node-service-rds-azure/template.yaml
+      rules:
+        - allow: [Template]
     - type: file
       target: ../../templates/podinfo-example/template.yaml
       rules:
