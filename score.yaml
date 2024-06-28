@@ -41,6 +41,7 @@ containers:
       POSTGRES_PORT: ${resources.db.port}
       POSTGRES_USER: ${resources.db.username}
       CLOUD_PROVIDER: ${resources.env.CLOUD_PROVIDER}
+      AZURE_TOKEN: ${values.azure_token}
 
     files:
       - target: /app/credentials/github-app-backstage-humanitec-credentials.yaml
