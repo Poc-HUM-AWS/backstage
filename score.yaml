@@ -69,3 +69,5 @@ resources:
       port: 7007
   db:
     type: postgres
+  svcaccount:
+    type: k8s-service-account
