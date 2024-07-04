@@ -92,7 +92,7 @@ spec:
       action: azure:pipeline:create
       input:
         organization: ${{ (parameters.repoUrl | parseRepoUrl)['organization'] }}
-        project: ${{ (parameters.repoUrl | parseRepoUrl)['owner'] }}
+        project: ${{ (parameters.repoUrl | parseRepoUrl)['project'] }}
         folder: "my-azure-pipelines-folder"
         name: ${{ parameters.componentName }}
         repositoryId: ${{ steps.publish.output.repositoryId }}
