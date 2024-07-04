@@ -105,7 +105,7 @@ spec:
       input:
         organization: ${{ (parameters.repoUrl | parseRepoUrl)['organization'] }}
         pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
-        project: ${{ (parameters.repoUrl | parseRepoUrl)['owner'] }}
+        project: ${{ (parameters.repoUrl | parseRepoUrl)['project'] }}
 
     - id: humanitec-create-app
       name: Create Humanitec App
