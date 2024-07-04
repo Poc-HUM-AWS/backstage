@@ -33,9 +33,8 @@
     "@backstage/plugin-permission-node": "^0.7.32",
     "@backstage/plugin-proxy-backend": "^0.5.2",
     "@backstage/plugin-scaffolder-backend": "^1.22.11",
-    "@backstage/plugin-scaffolder-backend-module-github": "^0.3.2",
     "@backstage/plugin-scaffolder-backend-module-azure": "^0.1.13",
-
+    "@backstage/plugin-scaffolder-backend-module-github": "^0.3.2",
     "@backstage/plugin-search-backend": "^1.5.13",
     "@backstage/plugin-search-backend-module-catalog": "^0.1.27",
     "@backstage/plugin-search-backend-module-techdocs": "^0.1.26",
@@ -43,6 +42,7 @@
     "@backstage/plugin-techdocs-backend": "^1.10.8",
     "@humanitec/backstage-plugin-backend": "^0.7.0",
     "@humanitec/backstage-plugin-scaffolder-backend-module": "^0.4.0",
+    "@internal/backstage-plugin-scaffolder-backend-module-azure-pipelines-actions": "^0.1.0",
     "app": "link:../app",
     "better-sqlite3": "^9.0.0",
     "node-gyp": "^10.0.0",

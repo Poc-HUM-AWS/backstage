@@ -1,0 +1,100 @@
+name: $(Build.SourceBranchName).$(date:yyyyMMdd)$(rev:.r)
+
+variables:
+  - name: dockerRegistryServiceConnection
+    value: 'bancolombia-ingesbx-poc-ecr'
+  - name: environment
+    value: development
+
+trigger:
+  branches:
+    include:
+      - main
+
+stages:
+  - stage: Build
+    displayName: Build and deploy
+    variables:
+      - group: ops00123456-plateng-poc
+    jobs:
+      - job: Linux
+        displayName: build and deploy with Humanitec
+        steps:
+
+          - task: Docker@2
+            name: dockerbuild
+            displayName: Build and Push Image
+            inputs:
+              containerRegistry: $(dockerRegistryServiceConnection) 
+              repository: $(Build.Repository.Name)
+              command: buildAndPush
+              Dockerfile: $(Build.SourcesDirectory)/Dockerfile
+              tags: $(Build.BuildId)
+
+          - task: Bash@3
+            displayName: Humanitec Env Variables
+            inputs:
+              targetType: 'inline'
+              script: |
+                echo "Setting Humanitec Environment Variables..."
+                REPO_NAME=$(Build.Repository.Name)
+                APP_NAME=$(echo ${REPO_NAME} | tr _ -)
+                echo "##vso[task.setvariable variable=HUMANITEC_API_KEY]$(HUMANITEC_API_KEY)"
+                echo "##vso[task.setvariable variable=HUMANITEC_ORG]$(HUMANITEC_ORG)"
+                echo "##vso[task.setvariable variable=HUMANITEC_APP]${APP_NAME}"
+                echo "##vso[task.setvariable variable=HUMANITEC_ENVIRONMENT]development"
+
+          - task: Bash@3
+            displayName: Install Humanitec CLI
+            inputs:
+              targetType: 'inline'
+              script: |
+                echo $(HUMANITEC_API_KEY)
+                curl -fLO https://github.com/humanitec/cli/releases/download/v0.25.0/cli_0.25.0_linux_amd64.tar.gz
+                tar xvzf cli_0.25.0_linux_amd64.tar.gz
+                rm cli_0.25.0_linux_amd64.tar.gz README.md
+                sudo install -o root -g root -m 0755 humctl /usr/local/bin/humctl
+                humctl version
+                humctl get orgs --token $(HUMANITEC_API_KEY)
+          
+          - task: replacetokens@6
+            displayName: Replace Tokens Score
+            inputs:
+              sources: 'score.yaml'
+
+          - task: Bash@3
+            displayName: Humanitec Score Validate
+            inputs:
+              targetType: 'inline'
+              script: |
+                echo "Validating Score file..."
+                scorevalidate=(humctl score validate score.yaml --token $(HUMANITEC_API_KEY) --org $(HUMANITEC_ORG) --output json)
+                echo $scorevalidate
+                output=(echo $scorevalidate | jq .[0])
+                scoremsg=$(echo $output | jq .Message)
+                echo "##vso[task.logissue type=warning;]$scoremsg"
+
+          - script: |
+              export LC_ALL=C.UTF-8
+              make humanitec-deploy
+            displayName: 'Humanitec Score Deploy'
+          
+          # - task: Bash@3
+          #   displayName: Humanitec Create Artefact
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       humctl create artefact-version \
+          #       --type workload \
+          #       --spec ./score.yaml \
+          #       --name poc-banco/helloWorld \
+          #       --version 1.2.3 \
+          #       --ref refs/heads/main \
+
+          # - task: Bash@3
+          #   displayName: Notify Humanitec
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       humctl notify --event=deployment --deployment-id=$(Build.BuildId) --status=success --api-key=$(HUMANITEC_API_KEY)
+          
