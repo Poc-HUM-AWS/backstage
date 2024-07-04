@@ -73,3 +73,6 @@ humanitec:
   token: ${HUMANITEC_TOKEN}
   cloudProvider: ${CLOUD_PROVIDER}
   githubOrgId: ${GITHUB_ORG_ID}
+
+azurePipelines:
+  token: ${AZURE_TOKEN}

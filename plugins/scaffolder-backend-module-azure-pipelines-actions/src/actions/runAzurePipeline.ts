@@ -148,7 +148,7 @@ export const runAzurePipelineAction = (options: {
         runApiVersion: runApiVersion ?? "7.1-preview.1",
         buildApiVersion: buildApiVersion ?? "7.0-preview.1"
       }
-      const token:string = options.config.getString("integrations.azure.token")
+      const token:string = options.config.getString("azurePipelines.token")
 
       ctx.logger.info(`Running Azure pipeline with the ID ${pipelineId}.`);
       

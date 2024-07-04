@@ -106,7 +106,7 @@ export const createAzurePipelineAction = (options: {
       const host = server ?? "dev.azure.com";
       
       const apiVersion = createApiVersion ?? "7.0-preview.1";
-      const token:string = options.config.getString("integrations.azure.token")
+      const token:string = options.config.getString("azurePipelines.token")
 
       ctx.logger.info(
         `Creating an Azure pipeline for the repository ${repositoryName} with the ID ${repositoryId}.`
