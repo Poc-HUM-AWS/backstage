@@ -8,6 +8,8 @@
 
 import { createBackend } from '@backstage/backend-defaults';
 
+import scaffolderModuleAzurePipelinesActions from "@internal/backstage-plugin-scaffolder-backend-module-azure-pipelines-actions";
+
 const backend = createBackend();
 
 backend.add(import('@backstage/plugin-app-backend/alpha'));
@@ -41,6 +43,8 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs/alpha'));
 backend.add(import('@backstage/plugin-scaffolder-backend/alpha'));
 backend.add(import('@backstage/plugin-scaffolder-backend-module-github'));
 backend.add(import('@backstage/plugin-scaffolder-backend-module-azure'));
+//actions
+backend.add(scaffolderModuleAzurePipelinesActions);
 
 // humanitec
 backend.add(import('@humanitec/backstage-plugin-backend'));
