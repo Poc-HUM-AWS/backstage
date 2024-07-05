@@ -76,3 +76,15 @@ humanitec:
 
 azurePipelines:
   token: ${AZURE_TOKEN}
+
+aws:
+  # The main account is used as the source of credentials for calling
+  # the STS AssumeRole API to assume IAM roles in other AWS accounts.
+  # This section can be omitted to fall back to the AWS SDK's default creds chain.
+  # mainAccount:
+  #   accessKeyId: ${MY_ACCESS_KEY_ID}
+  #   secretAccessKey: ${MY_SECRET_ACCESS_KEY}
+  # Account credentials can be configured individually per account
+  accounts:
+    # Credentials can come from the AWS SDK's default creds chain
+    - accountId: '271590248982'

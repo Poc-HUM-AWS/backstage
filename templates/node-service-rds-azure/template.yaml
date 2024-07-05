@@ -80,7 +80,7 @@ spec:
       action: aws:cloudcontrol:create
       input:
         accountId: '271590248982'
-        region: 'us-east-1'
+        region: us-east-1
         typeName: 'AWS::ECR::Repository'
         desiredState: '{"RepositoryName": "${{ parameters.componentName }}"}'
         wait: true
