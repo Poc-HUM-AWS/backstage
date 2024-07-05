@@ -39,6 +39,13 @@ spec:
           ui:options:
             allowedHosts:
               - dev.azure.com
+            allowedOrganizations:
+              - jaaechev
+            allowedProjects:
+              - bancolombiaTests
+            allowedRepos:
+             - ${{ parameters.componentName }}
+
     - title: Choose Pipeline Parameters
       description: Please select some pipeline parameters
       properties:
@@ -48,10 +55,10 @@ spec:
           properties:
             name:
               type: string
-            id:
-              type: number
-            foo:
-              type: string
+            # id:
+            #   type: number
+            # foo:
+            #   type: string
 
   steps:
     - name: Read Environment
@@ -68,6 +75,17 @@ spec:
           image: ${{ parameters.componentName }}
           orgId: ${{ steps.environment.output.orgId }}
           cloudProvider: ${{ steps.environment.output.cloudProvider }}
+
+    - id: create-ecr-repository
+      name: Create ECR Repository
+      action: aws:cloudcontrol:create
+      input:
+        accountId: '271590248982'
+        region: 'us-east-1'
+        typeName: 'AWS::ECR::Repository'
+        desiredState: '{"RepositoryName": "${{ parameters.componentName }}"}'
+        wait: true
+        maxWaitTime: 20
 
     # - id: publish
     #   name: Publish
