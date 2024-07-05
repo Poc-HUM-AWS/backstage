@@ -1,4 +1,4 @@
 apiVersion: humanitec.org/v1b1
 
 spec:
-  serviceAccountName: backstage-development
+  serviceAccountName: sa-backstage-development
