@@ -84,7 +84,7 @@ spec:
         typeName: 'AWS::ECR::Repository'
         desiredState: '{"RepositoryName": "${{ parameters.componentName }}"}'
         wait: true
-        maxWaitTime: 20
+        maxWaitTime: 120
 
     # - id: publish
     #   name: Publish
