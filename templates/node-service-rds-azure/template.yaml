@@ -77,7 +77,7 @@ spec:
 
     - id: create-ecr-repository
       name: Create ECR Repository
-      action: aws:cloudcontrol:create
+      action: aws:cloudcontrol-v1:create
       input:
         # accountId: '271590248982'
         region: us-east-1

@@ -43,6 +43,7 @@
     "@backstage/plugin-techdocs-backend": "^1.10.8",
     "@humanitec/backstage-plugin-backend": "^0.7.0",
     "@humanitec/backstage-plugin-scaffolder-backend-module": "^0.4.0",
+    "@internal/backstage-plugin-scaffolder-backend-module-aws-actions": "^0.1.0",
     "@internal/backstage-plugin-scaffolder-backend-module-azure-pipelines-actions": "^0.1.0",
     "app": "link:../app",
     "better-sqlite3": "^9.0.0",
