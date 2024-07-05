@@ -139,7 +139,7 @@ export const createAwsCloudControlCreateActionV1 = ({}
         return;
       }
 
-      ctx.logStream.write(
+      ctx.logger.info(
         `Waiting ${maxWaitTime} seconds for resource creation...`,
       );
 
@@ -158,7 +158,7 @@ export const createAwsCloudControlCreateActionV1 = ({}
 
       const identifier = resourceRequest.ProgressEvent?.Identifier;
 
-      ctx.logStream.write(
+      ctx.logger.info(
         `Resource creation succeeded, returning identifier ${identifier}`,
       );
 
