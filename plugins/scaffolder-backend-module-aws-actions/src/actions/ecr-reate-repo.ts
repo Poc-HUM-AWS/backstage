@@ -109,17 +109,17 @@ export const createAwsCloudControlCreateAction = (options: {
         maxWaitTime = 120,
       } = ctx.input;
 
-      let credentialProvider: AwsCredentialIdentityProvider;
+    //   let credentialProvider: AwsCredentialIdentityProvider;
 
-      if (accountId) {
-        credentialProvider = (
-          await options.credsManager.getCredentialProvider({ accountId })
-        ).sdkCredentialProvider;
-      } else {
-        credentialProvider = (
-          await options.credsManager.getCredentialProvider()
-        ).sdkCredentialProvider;
-      }
+    //   if (accountId) {
+    //     credentialProvider = (
+    //       await options.credsManager.getCredentialProvider({ accountId })
+    //     ).sdkCredentialProvider;
+    //   } else {
+    //     credentialProvider = (
+    //       await options.credsManager.getCredentialProvider()
+    //     ).sdkCredentialProvider;
+    //   }
 
       const client = new CloudControlClient({
         region,
