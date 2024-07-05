@@ -109,17 +109,19 @@ export const createAwsCloudControlCreateAction = (options: {
         maxWaitTime = 120,
       } = ctx.input;
 
-    //   let credentialProvider: AwsCredentialIdentityProvider;
+      let credentialProvider: AwsCredentialIdentityProvider;
 
-    //   if (accountId) {
-    //     credentialProvider = (
-    //       await options.credsManager.getCredentialProvider({ accountId })
-    //     ).sdkCredentialProvider;
-    //   } else {
-    //     credentialProvider = (
-    //       await options.credsManager.getCredentialProvider()
-    //     ).sdkCredentialProvider;
-    //   }
+      if (accountId) {
+        credentialProvider = (
+          await options.credsManager.getCredentialProvider({ accountId })
+        ).sdkCredentialProvider;
+      } else {
+        credentialProvider = (
+          await options.credsManager.getCredentialProvider()
+        ).sdkCredentialProvider;
+      }
+
+      console.log('credentialProvider', credentialProvider);
 
       const client = new CloudControlClient({
         region,
@@ -140,7 +142,7 @@ export const createAwsCloudControlCreateAction = (options: {
         return;
       }
 
-      ctx.logStream.write(
+      ctx.logger.write(
         `Waiting ${maxWaitTime} seconds for resource creation...`,
       );
 
@@ -159,7 +161,7 @@ export const createAwsCloudControlCreateAction = (options: {
 
       const identifier = resourceRequest.ProgressEvent?.Identifier;
 
-      ctx.logStream.write(
+      ctx.logger.write(
         `Resource creation succeeded, returning identifier ${identifier}`,
       );
 
