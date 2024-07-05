@@ -25,26 +25,25 @@ spec:
           ui:options:
             rows: 5
           ui:field: ValidateHumanitecAppID
-    - title: Choose a location
-      description: >-
-        Organization is an Azure DevOps organization. Owner is an Azure DevOps project.
-        Repository is the name of the repository Backstage will create for you.
-      required:
-        - repoUrl
-      properties:
-        repoUrl:
-          title: Repository Location
-          type: string
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
-              - dev.azure.com
-            allowedOrganizations:
-              - jaaechev
-            allowedProjects:
-              - bancolombiaTests
-            allowedRepos:
-             - ${{ parameters.componentName }}
+    # - title: Choose a location
+    #   description: >-
+    #     Organization is an Azure DevOps organization. Owner is an Azure DevOps project.
+    #     Repository is the name of the repository Backstage will create for you.
+    #   required:
+    #     - repoUrl
+    #   properties:
+    #     repoUrl:
+    #       title: Repository Location
+    #       type: string
+    #       ui:field: RepoUrlPicker
+    #       ui:options:
+    #         allowedHosts:
+    #           - dev.azure.com
+    #         allowedOrganizations:
+    #           - jaaechev
+    #         allowedProjects:
+    #           - bancolombiaTests
+            
 
     - title: Choose Pipeline Parameters
       description: Please select some pipeline parameters
@@ -103,7 +102,7 @@ spec:
         allowedHosts: ["dev.azure.com"]
         defaultBranch: main
         description: This is ${{ parameters.componentName }}
-        repoUrl: ${{ parameters.repoUrl }}
+        repoUrl: dev.azure.com?organization=jaaechev&project=bancolombiaTests&repo=${{ parameters.componentName }}
     
     - id: createAzurePipeline
       name: Create Azure Pipeline
