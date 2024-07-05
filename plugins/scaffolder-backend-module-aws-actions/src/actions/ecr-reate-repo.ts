@@ -18,14 +18,13 @@ import {
   GetResourceRequestStatusCommand,
   waitUntilResourceRequestSuccess,
 } from '@aws-sdk/client-cloudcontrol';
-import { AwsCredentialsManager } from '@backstage/integration-aws-node';
-import { AwsCredentialIdentityProvider } from '@aws-sdk/types';
+// import { AwsCredentialsManager } from '@backstage/integration-aws-node';
+// import { AwsCredentialIdentityProvider } from '@aws-sdk/types';
 import { z } from 'zod';
-import { AWS_SDK_CUSTOM_USER_AGENT } from '@aws/aws-core-plugin-for-backstage-common';
+// import { AWS_SDK_CUSTOM_USER_AGENT } from '@aws/aws-core-plugin-for-backstage-common';
 
-export const createAwsCloudControlCreateAction = (options: {
-  credsManager: AwsCredentialsManager;
-}) => {
+export const createAwsCloudControlCreateActionV1 = ({}
+) => {
   return createTemplateAction<{
     accountId?: string;
     region?: string;
@@ -98,7 +97,7 @@ export const createAwsCloudControlCreateAction = (options: {
     },
     async handler(ctx) {
       const {
-        accountId,
+        // accountId,
         region,
         typeName,
         desiredState,
@@ -109,23 +108,21 @@ export const createAwsCloudControlCreateAction = (options: {
         maxWaitTime = 120,
       } = ctx.input;
 
-      let credentialProvider: AwsCredentialIdentityProvider;
+    //   let credentialProvider: AwsCredentialIdentityProvider;
 
-      if (accountId) {
-        credentialProvider = (
-          await options.credsManager.getCredentialProvider({ accountId })
-        ).sdkCredentialProvider;
-      } else {
-        credentialProvider = (
-          await options.credsManager.getCredentialProvider()
-        ).sdkCredentialProvider;
-      }
-
-      console.log('credentialProvider', credentialProvider);
+    //   if (accountId) {
+    //     credentialProvider = (
+    //       await options.credsManager.getCredentialProvider({ accountId })
+    //     ).sdkCredentialProvider;
+    //   } else {
+    //     credentialProvider = (
+    //       await options.credsManager.getCredentialProvider()
+    //     ).sdkCredentialProvider;
+    //   }
 
       const client = new CloudControlClient({
         region,
-        customUserAgent: AWS_SDK_CUSTOM_USER_AGENT,
+        // customUserAgent: AWS_SDK_CUSTOM_USER_AGENT,
         // credentialDefaultProvider: () => credentialProvider,
       });
       const response = await client.send(

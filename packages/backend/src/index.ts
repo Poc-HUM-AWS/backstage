@@ -45,7 +45,7 @@ backend.add(import('@backstage/plugin-scaffolder-backend-module-github'));
 backend.add(import('@backstage/plugin-scaffolder-backend-module-azure'));
 //actions
 backend.add(scaffolderModuleAzurePipelinesActions);
-backend.add(import('@aws/aws-core-plugin-for-backstage-scaffolder-actions'));
+// backend.add(import('@aws/aws-core-plugin-for-backstage-scaffolder-actions'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-aws-actions'));
 
 // humanitec

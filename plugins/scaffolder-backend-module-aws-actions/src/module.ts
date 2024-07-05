@@ -1,12 +1,12 @@
 import {
-  coreServices,
+  // coreServices,
   createBackendModule,
 } from '@backstage/backend-plugin-api';
 
 import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node/alpha';
-import { DefaultAwsCredentialsManager } from '@backstage/integration-aws-node';
+// import { DefaultAwsCredentialsManager } from '@backstage/integration-aws-node';
 
-import {createAwsCloudControlCreateAction} from './actions/ecr-reate-repo'
+import {createAwsCloudControlCreateActionV1} from './actions/ecr-reate-repo'
 
 export const scaffolderModuleAwsActions = createBackendModule({
   pluginId: 'scaffolder',
@@ -15,11 +15,12 @@ export const scaffolderModuleAwsActions = createBackendModule({
     reg.registerInit({
       deps: { 
         scaffolder: scaffolderActionsExtensionPoint,
-        config: coreServices.rootConfig,},
-      async init({ scaffolder, config }) {
-        const awsCredentialsManager =
-          DefaultAwsCredentialsManager.fromConfig(config);
-        scaffolder.addActions(createAwsCloudControlCreateAction({credsManager: awsCredentialsManager}));
+        // config: coreServices.rootConfig,},
+      },
+      async init({ scaffolder }) {
+        // const awsCredentialsManager =
+        //   DefaultAwsCredentialsManager.fromConfig(config);
+        scaffolder.addActions(createAwsCloudControlCreateActionV1({}));
       },
     });
   },

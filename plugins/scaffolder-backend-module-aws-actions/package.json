@@ -27,8 +27,8 @@
     "@backstage/backend-common": "^0.23.2",
     "@backstage/backend-plugin-api": "^0.6.21",
 
-    "@aws-sdk/client-cloudcontrol": "^3.511.0",
-    "@aws-sdk/types": "^3.511.0",
+    "@aws-sdk/client-cloudcontrol": "^3.609.0",
+    "@aws-sdk/types": "^3.609.0",
     "@backstage/errors": "^1.2.4",
     "@backstage/integration-aws-node": "^0.1.12",
     "@backstage/plugin-scaffolder-node": "^0.4.2",
