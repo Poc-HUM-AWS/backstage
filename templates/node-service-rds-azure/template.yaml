@@ -136,17 +136,29 @@ spec:
         description: This is ${{ parameters.componentName }}
         repoUrl: dev.azure.com?organization=jaaechev&project=bancolombiaTests&repo=${{ parameters.componentName }}
     
-    - id: createAzurePipeline
-      name: Create Azure Pipeline
-      action: azure:pipeline:create
-      input:
-        organization: ${{ (parameters.repoUrl | parseRepoUrl)['organization'] }}
-        project: ${{ (parameters.repoUrl | parseRepoUrl)['project'] }}
-        folder: "my-azure-pipelines-folder"
-        name: ${{ parameters.componentName }}
-        repositoryId: ${{ steps.publish.output.repositoryId }}
-        repositoryName: ${{ (parameters.repoUrl | parseRepoUrl)['repo'] }}
-        yamlPath: ./azure-pipeline.yaml
+    # - id: createAzurePipeline
+    #   name: Create Azure Pipeline
+    #   action: azure:pipeline:create
+    #   input:
+    #     organization: ${{ (parameters.repoUrl | parseRepoUrl)['organization'] }}
+    #     project: ${{ (parameters.repoUrl | parseRepoUrl)['project'] }}
+    #     folder: "my-azure-pipelines-folder"
+    #     name: ${{ parameters.componentName }}
+    #     repositoryId: ${{ steps.publish.output.repositoryId }}
+    #     repositoryName: ${{ (parameters.repoUrl | parseRepoUrl)['repo'] }}
+    #     yamlPath: ./azure-pipeline.yaml
+
+      - id: createAzurePipeline
+        name: Create Azure Pipeline
+        action: azure:pipeline:create
+        input:
+          organization: jaaechev
+          project: bancolombiaTests
+          folder: "my-azure-pipelines-folder"
+          name: ${{ parameters.componentName }}
+          repositoryId: ${{ steps.publish.output.repositoryId }}
+          repositoryName: ${{ parameters.componentName }}
+          yamlPath: ./azure-pipeline.yaml
 
     - id: humanitec-create-app
       name: Create Humanitec App
