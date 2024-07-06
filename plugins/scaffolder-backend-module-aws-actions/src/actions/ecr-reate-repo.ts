@@ -1,9 +1,12 @@
-/**
- * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
+/*
+ * Copyright 2021 Larder Software Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,156 +16,82 @@
 
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
 import {
-  CloudControlClient,
-  CreateResourceCommand,
-  GetResourceRequestStatusCommand,
-  waitUntilResourceRequestSuccess,
-} from '@aws-sdk/client-cloudcontrol';
-// import { AwsCredentialsManager } from '@backstage/integration-aws-node';
-// import { AwsCredentialIdentityProvider } from '@aws-sdk/types';
-import { z } from 'zod';
-// import { AWS_SDK_CUSTOM_USER_AGENT } from '@aws/aws-core-plugin-for-backstage-common';
+  ECRClient,
+  CreateRepositoryCommand,
+  CreateRepositoryCommandInput,
+  ImageTagMutability,
+  ECRClientConfig,
+} from '@aws-sdk/client-ecr';
+import { assertError } from '@backstage/errors';
 
-export const createAwsCloudControlCreateActionV1 = ({}
-) => {
+export function createEcrAction({}) {
   return createTemplateAction<{
-    accountId?: string;
-    region?: string;
-    typeName: string;
-    desiredState: string;
-    clientToken?: string;
-    roleArn?: string;
-    typeVersionId?: string;
-    wait?: boolean;
-    maxWaitTime?: number;
+    repoName: string;
+    tags: Array<any>;
+    imageMutability: boolean;
+    scanOnPush: boolean;
+    region: string;
   }>({
-    id: 'aws:cloudcontrol-v1:create',
-    description: 'Creates the specified resource.',
+    id: 'aws:ecr:create',
     schema: {
-      input: z.object({
-        accountId: z
-          .string()
-          .describe('The AWS account ID to create the resource.')
-          .optional(),
-        region: z
-          .string()
-          .describe('The AWS region to create the resource.')
-          .optional(),
-        typeName: z.string().describe('The name of the resource type.'),
-        desiredState: z
-          .string()
-          .describe(
-            "Structured data format representing the desired state of the resource, consisting of that resource's properties and their desired values.",
-          ),
-        clientToken: z
-          .string()
-          .describe(
-            'A unique identifier to ensure the idempotency of the resource request.',
-          )
-          .optional(),
-        roleArn: z
-          .string()
-          .describe(
-            'IAM role for Cloud Control API to use when performing this resource operation.',
-          )
-          .optional(),
-        typeVersionId: z
-          .string()
-          .describe(
-            'For private resource types, the type version to use in this resource operation.',
-          )
-          .optional(),
-        wait: z
-          .boolean()
-          .describe(
-            'Whether the action should wait until the requested resource is created.',
-          )
-          .optional()
-          .default(false),
-        maxWaitTime: z
-          .number()
-          .describe(
-            'If this action is configured to wait this is the maximum time in seconds it will wait before failing.',
-          )
-          .optional()
-          .default(120),
-      }),
-      output: z.object({
-        identifier: z
-          .string()
-          .describe(
-            'The primary identifier for the resource (only available if wait is enabled).',
-          ),
-      }),
+      input: {
+        required: ['repoName', 'region'],
+        type: 'object',
+        properties: {
+          repoName: {
+            type: 'string',
+            title: 'repoName',
+            description: 'The name of the ECR repository',
+          },
+          tags: {
+            type: 'array',
+            title: 'tags',
+            description: 'list of tags',
+          },
+          imageMutability: {
+            type: 'boolean',
+            title: 'ImageMutability',
+            description: 'set image mutability to true or false',
+          },
+          scanOnPush: {
+            type: 'boolean',
+            title: 'Scan On Push',
+            description:
+              'The image scanning configuration for the repository. This determines whether images are scanned for known vulnerabilities after being pushed to the repository.',
+          },
+          region: {
+            type: 'string',
+            title: 'aws region',
+            description: 'aws region to create ECR on',
+          },
+        },
+      },
     },
     async handler(ctx) {
-      const {
-        // accountId,
-        region,
-        typeName,
-        desiredState,
-        roleArn,
-        clientToken,
-        typeVersionId,
-        wait = false,
-        maxWaitTime = 120,
-      } = ctx.input;
-
-    //   let credentialProvider: AwsCredentialIdentityProvider;
-
-    //   if (accountId) {
-    //     credentialProvider = (
-    //       await options.credsManager.getCredentialProvider({ accountId })
-    //     ).sdkCredentialProvider;
-    //   } else {
-    //     credentialProvider = (
-    //       await options.credsManager.getCredentialProvider()
-    //     ).sdkCredentialProvider;
-    //   }
-
-      const client = new CloudControlClient({
-        region,
-        // customUserAgent: AWS_SDK_CUSTOM_USER_AGENT,
-        // credentialDefaultProvider: () => credentialProvider,
-      });
-      const response = await client.send(
-        new CreateResourceCommand({
-          TypeName: typeName,
-          DesiredState: desiredState,
-          RoleArn: roleArn,
-          ClientToken: clientToken,
-          TypeVersionId: typeVersionId,
-        }),
-      );
-
-      if (!wait) {
-        return;
+      const setImageMutability = ctx.input.imageMutability
+        ? ImageTagMutability.MUTABLE
+        : ImageTagMutability.IMMUTABLE;
+      const input: CreateRepositoryCommandInput = {
+        repositoryName: ctx.input.repoName,
+        imageScanningConfiguration: { scanOnPush: ctx.input.scanOnPush },
+        imageTagMutability: setImageMutability,
+        tags: ctx.input.tags,
+      };
+      const config: ECRClientConfig = {
+        region: ctx.input.region
+      };
+      const createCommand = new CreateRepositoryCommand(input);
+      const client = new ECRClient(config);
+      try {
+        const response = await client.send(createCommand);
+        ctx.logger.info(
+          `Created ECR repository: ${response.repository?.repositoryUri}`,
+        );
+      } catch (e) {
+        assertError(e);
+        ctx.logger.warn(`Unable to create ECR repository: ${e}`);
+        throw e;
       }
-
-      ctx.logger.info(
-        `Waiting ${maxWaitTime} seconds for resource creation...`,
-      );
-
-      const requestToken = response.ProgressEvent?.RequestToken;
-
-      await waitUntilResourceRequestSuccess(
-        { client, maxWaitTime: maxWaitTime! },
-        { RequestToken: response.ProgressEvent?.RequestToken },
-      );
-
-      const resourceRequest = await client.send(
-        new GetResourceRequestStatusCommand({
-          RequestToken: requestToken,
-        }),
-      );
-
-      const identifier = resourceRequest.ProgressEvent?.Identifier;
-
-      ctx.logger.info(
-        `Resource creation succeeded, returning identifier ${identifier}`,
-      );
-
-      ctx.output('identifier', identifier);
     },
   });
-};
+}

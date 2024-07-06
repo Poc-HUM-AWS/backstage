@@ -25,6 +25,39 @@ spec:
           ui:options:
             rows: 5
           ui:field: ValidateHumanitecAppID
+
+    - title: Add ecr Details
+      required:
+        - Region
+      properties:
+        Region:
+          title: aws region
+          type: string
+          description: region for aws ECR
+          default: 'us-east-1'
+        ImageMutability:
+          title: Enable Image Mutability
+          description: set image mutability to true or false
+          type: boolean
+          default: false
+        ScanOnPush:
+          title: Enable Image Scanning
+          description: The image scanning configuration for the repository. This determines whether images are scanned for known vulnerabilities after being pushed to the repository.
+          type: boolean
+          default: false
+        Tags:
+          type: array
+          items:
+            type: object
+            description: Repository tags
+            title: tag
+            properties:
+              Key:
+                type: string
+                title: Key
+              Value:
+                type: string
+                title: Value
     # - title: Choose a location
     #   description: >-
     #     Organization is an Azure DevOps organization. Owner is an Azure DevOps project.
@@ -75,16 +108,15 @@ spec:
           orgId: ${{ steps.environment.output.orgId }}
           cloudProvider: ${{ steps.environment.output.cloudProvider }}
 
-    - id: create-ecr-repository
-      name: Create ECR Repository
-      action: aws:cloudcontrol-v1:create
+    - id: create-ecr
+      name: Create ECR Rrepository
+      action: aws:ecr:create
       input:
-        # accountId: '271590248982'
-        region: us-east-1
-        typeName: 'AWS::ECR::Repository'
-        desiredState: '{"RepositoryName": "${{ parameters.componentName }}"}'
-        wait: true
-        maxWaitTime: 120
+        repoName: ${{ parameters.componentName }}
+        tags: ${{parameters.Tags}}
+        imageMutability: ${{parameters.ImageMutability}}
+        scanOnPush: ${{parameters.ScanOnPush}}
+        region: ${{parameters.Region}}
 
     # - id: publish
     #   name: Publish

@@ -6,7 +6,7 @@ import {
 import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node/alpha';
 // import { DefaultAwsCredentialsManager } from '@backstage/integration-aws-node';
 
-import {createAwsCloudControlCreateActionV1} from './actions/ecr-reate-repo'
+import {createEcrAction} from './actions/ecr-reate-repo'
 
 export const scaffolderModuleAwsActions = createBackendModule({
   pluginId: 'scaffolder',
@@ -20,7 +20,7 @@ export const scaffolderModuleAwsActions = createBackendModule({
       async init({ scaffolder }) {
         // const awsCredentialsManager =
         //   DefaultAwsCredentialsManager.fromConfig(config);
-        scaffolder.addActions(createAwsCloudControlCreateActionV1({}));
+        scaffolder.addActions(createEcrAction({}));
       },
     });
   },
