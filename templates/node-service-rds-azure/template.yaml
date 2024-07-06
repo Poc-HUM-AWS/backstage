@@ -148,17 +148,17 @@ spec:
     #     repositoryName: ${{ (parameters.repoUrl | parseRepoUrl)['repo'] }}
     #     yamlPath: ./azure-pipeline.yaml
 
-      - id: createAzurePipeline
-        name: Create Azure Pipeline
-        action: azure:pipeline:create
-        input:
-          organization: jaaechev
-          project: bancolombiaTests
-          folder: "my-azure-pipelines-folder"
-          name: ${{ parameters.componentName }}
-          repositoryId: ${{ steps.publish.output.repositoryId }}
-          repositoryName: ${{ parameters.componentName }}
-          yamlPath: ./azure-pipeline.yaml
+    - id: createAzurePipeline
+      name: Create Azure Pipeline
+      action: azure:pipeline:create
+      input:
+        organization: jaaechev
+        project: bancolombiaTests
+        folder: "my-azure-pipelines-folder"
+        name: ${{ parameters.componentName }}
+        repositoryId: ${{ steps.publish.output.repositoryId }}
+        repositoryName: ${{ parameters.componentName }}
+        yamlPath: ./azure-pipeline.yaml
 
     - id: humanitec-create-app
       name: Create Humanitec App
@@ -166,13 +166,21 @@ spec:
       input:
         appId: ${{ parameters.componentName }}
 
+    # - id: runAzurePipeline
+    #   name: Run Azure Pipeline
+    #   action: azure:pipeline:run
+    #   input:
+    #     organization: ${{ (parameters.repoUrl | parseRepoUrl)['organization'] }}
+    #     pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
+    #     project: ${{ (parameters.repoUrl | parseRepoUrl)['project'] }}
+
     - id: runAzurePipeline
       name: Run Azure Pipeline
       action: azure:pipeline:run
       input:
-        organization: ${{ (parameters.repoUrl | parseRepoUrl)['organization'] }}
+        organization: jaaechev
         pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
-        project: ${{ (parameters.repoUrl | parseRepoUrl)['project'] }}
+        project: bancolombiaTests
 
     - id: register
       name: Register
