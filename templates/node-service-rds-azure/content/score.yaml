@@ -13,7 +13,7 @@ service:
 # Define the containers that make up this service
 containers:
   node-service:
-    image: . # Set by pipeline
+    image: "271590248982.dkr.ecr.us-east-1.amazonaws.com/#{Build.Repository.Name}#:#{Build.BuildId}#"
     variables:
       PORT: "3000"
       DB_DATABASE: ${resources.db.name}
