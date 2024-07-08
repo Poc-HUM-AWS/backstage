@@ -166,7 +166,7 @@ spec:
       input:
         organization: jaaechev
         project: bancolombiaTests
-        resourceId: 1
+        resourceId: '1'
         resourceType: variablegroup
         authorized: true
         pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
