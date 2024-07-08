@@ -159,6 +159,17 @@ spec:
         repositoryId: ${{ steps.publish.output.repositoryId }}
         repositoryName: ${{ parameters.componentName }}
         yamlPath: ./azure-pipeline.yaml
+    
+    - id: permitAzurePipeline
+      name: Change Azure Pipeline Permissions
+      action: azure:pipeline:permit
+      input:
+        organization: jaaechev
+        project: bancolombiaTests
+        resourceId: 1
+        resourceType: variablegroup
+        authorized: true
+        pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
 
     - id: humanitec-create-app
       name: Create Humanitec App
@@ -181,17 +192,6 @@ spec:
         organization: jaaechev
         pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
         project: bancolombiaTests
-
-    - id: permitAzurePipeline
-      name: Change Azure Pipeline Permissions
-      action: azure:pipeline:permit
-      input:
-        organization: jaaechev
-        project: bancolombiaTests
-        resourceId: c139b9b8-0a39-4de8-820b-6bf2c9972251
-        resourceType: dockerregistry
-        authorized: true
-        pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
 
     - id: register
       name: Register
