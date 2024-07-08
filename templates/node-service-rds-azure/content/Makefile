@@ -39,3 +39,14 @@ compose-test: compose-up
 .PHONY: compose-down
 compose-down:
 	docker compose down -v --remove-orphans || true
+
+
+## Deploy the workload to Humanitec.
+.PHONY: humanitec-deploy
+humanitec-deploy:
+	humctl score deploy \
+		--file score.yaml \
+		--env ${HUMANITEC_ENVIRONMENT} \
+		--app ${HUMANITEC_APP} \
+		--org ${HUMANITEC_ORG} \
+		--token ${HUMANITEC_API_KEY}
