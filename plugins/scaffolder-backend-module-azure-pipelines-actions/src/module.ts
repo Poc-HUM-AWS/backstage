@@ -7,6 +7,7 @@ import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-no
 
 import {createAzurePipelineAction} from './actions/createAzurePipeline'
 import {runAzurePipelineAction} from './actions/runAzurePipeline'
+import {permitAzurePipelineAction} from './actions/permitAzurePipeline'
 
 export const scaffolderModuleAzurePipelinesActions = createBackendModule({
   pluginId: 'scaffolder',
@@ -21,6 +22,7 @@ export const scaffolderModuleAzurePipelinesActions = createBackendModule({
       async init({ scaffolder, config }) {
         scaffolder.addActions(createAzurePipelineAction({ config }));
         scaffolder.addActions(runAzurePipelineAction({ config }));
+        scaffolder.addActions(permitAzurePipelineAction({ config }));
       },
     });
   },

@@ -182,6 +182,17 @@ spec:
         pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
         project: bancolombiaTests
 
+    - id: permitAzurePipeline
+      name: Change Azure Pipeline Permissions
+      action: azure:pipeline:permit
+      input:
+        organization: jaaechev
+        project: bancolombiaTests
+        resourceId: c139b9b8-0a39-4de8-820b-6bf2c9972251
+        resourceType: dockerregistry
+        authorized: true
+        pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
+
     - id: register
       name: Register
       action: catalog:register
