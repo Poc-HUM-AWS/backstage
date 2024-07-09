@@ -7,8 +7,8 @@ metadata:
 service:
   ports:
     www:
-      port: 80 # The port that the service will be exposed on
-      targetPort: 3000 # The port that the container will be listening on
+      port: 8080
+      targetPort: 3000
 
 # Define the containers that make up this service
 containers:
@@ -16,6 +16,7 @@ containers:
     image: "271590248982.dkr.ecr.us-east-1.amazonaws.com/#{Build.Repository.Name}#:#{Build.BuildId}#"
     variables:
       PORT: "3000"
+      MESSAGE: "Hello, EVC Ingenieria Plataforma y Arquitectura de software! from backstage"
       DB_DATABASE: ${resources.db.name}
       DB_USER: ${resources.db.username}
       DB_PASSWORD: ${resources.db.password}
@@ -31,7 +32,7 @@ resources:
     params:
       host: ${resources.dns.host}
       path: /
-      port: 80
+      port: 8080
   db:  # We need a database to store data
     type: postgres
     class: rds
