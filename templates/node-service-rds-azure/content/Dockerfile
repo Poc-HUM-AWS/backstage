@@ -9,3 +9,4 @@ COPY --from=builder /node_modules ./node_modules
 COPY /src/index.js index.js
 EXPOSE 3000
 CMD ["node", "index.js"]
+
