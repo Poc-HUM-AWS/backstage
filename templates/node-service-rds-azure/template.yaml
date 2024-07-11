@@ -18,7 +18,7 @@ spec:
         - componentName
       properties:
         componentName:
-          title: Component Name
+          title: Application Name
           type: string
           description: Unique name of the project
           ui:autofocus: true
@@ -26,7 +26,7 @@ spec:
             rows: 5
           ui:field: ValidateHumanitecAppID
 
-    - title: Add ecr Details
+    - title: ECR Repository Configuration
       required:
         - Region
       properties:
@@ -93,12 +93,12 @@ spec:
     #         #   type: string
 
   steps:
-    - name: Read Environment
+    - name: Read Humanitec Environment
       id: environment
       action: humanitec:get-environment
 
     - id: fetch-base
-      name: Fetch Base
+      name: Fetch Repo Contents
       action: fetch:template
       input:
         url: ./content
@@ -109,7 +109,7 @@ spec:
           cloudProvider: ${{ steps.environment.output.cloudProvider }}
 
     - id: create-ecr
-      name: Create ECR Rrepository
+      name: Create ECR Repository
       action: aws:ecr:create
       input:
         repoName: ${{ parameters.componentName }}
@@ -128,7 +128,7 @@ spec:
     #     repoUrl: dev.azure.com?organization=jaaechev&project=bancolombiaTests&repo=${{ parameters.componentName }}
 
     - id: publish
-      name: Publish
+      name: Create DevOps Repository
       action: publish:azure
       input:
         allowedHosts: ["dev.azure.com"]
@@ -194,7 +194,7 @@ spec:
         project: bancolombiaTests
 
     - id: register
-      name: Register
+      name: Register in Catalog
       action: catalog:register
       input:
         repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
@@ -207,3 +207,5 @@ spec:
       - title: Open in catalog
         icon: catalog
         entityRef: ${{ steps['register'].output.entityRef }}
+      - title: Azure Pipeline
+        url: ${{ steps.createAzurePipeline.output.pipelineUrl }}
