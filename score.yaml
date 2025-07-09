@@ -55,11 +55,6 @@ containers:
           privateKey: |
             ${resources.env.GITHUB_APP_PRIVATE_KEY}
 
-    volumes:
-    - source: ${resources.empty-dir}
-      target: /tmp
-      readOnly: false
-
 resources:
   env:
     type: environment
@@ -73,5 +68,3 @@ resources:
       port: 7007
   db:
     type: postgres
-  empty-dir:
-    type: volume
