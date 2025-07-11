@@ -1,0 +1,12 @@
+{
+  "name": "${{ values.name }}",
+  "version": "1.0.0",
+  "description": "An Hello World workload in NodeJS talking to a PostgreSQL database.",
+  "main": "index.js",
+  "author": "score.dev",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
+}

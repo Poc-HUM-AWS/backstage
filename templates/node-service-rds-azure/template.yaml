@@ -1,0 +1,211 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: nodejs-service-template-rds
+  title: NodeJS Service Template-rds
+  description: An example template that creates a simple Hello World service connecting to AWS RDS
+  tags:
+    - score
+    - humanitec
+    - rds
+spec:
+  owner: user:guest
+  type: service
+
+  parameters:
+    - title: New NodeJS Service
+      required:
+        - componentName
+      properties:
+        componentName:
+          title: Application Name
+          type: string
+          description: Unique name of the project
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+          ui:field: ValidateHumanitecAppID
+
+    - title: ECR Repository Configuration
+      required:
+        - Region
+      properties:
+        Region:
+          title: aws region
+          type: string
+          description: region for aws ECR
+          default: 'us-east-1'
+        ImageMutability:
+          title: Enable Image Mutability
+          description: set image mutability to true or false
+          type: boolean
+          default: false
+        ScanOnPush:
+          title: Enable Image Scanning
+          description: The image scanning configuration for the repository. This determines whether images are scanned for known vulnerabilities after being pushed to the repository.
+          type: boolean
+          default: false
+        Tags:
+          type: array
+          items:
+            type: object
+            description: Repository tags
+            title: tag
+            properties:
+              Key:
+                type: string
+                title: Key
+              Value:
+                type: string
+                title: Value
+    # - title: Choose a location
+    #   description: >-
+    #     Organization is an Azure DevOps organization. Owner is an Azure DevOps project.
+    #     Repository is the name of the repository Backstage will create for you.
+    #   required:
+    #     - repoUrl
+    #   properties:
+    #     repoUrl:
+    #       title: Repository Location
+    #       type: string
+    #       ui:field: RepoUrlPicker
+    #       ui:options:
+    #         allowedHosts:
+    #           - dev.azure.com
+    #         allowedOrganizations:
+    #           - jaaechev
+    #         allowedProjects:
+    #           - bancolombiaTests
+            
+
+    # - title: Choose Pipeline Parameters
+    #   description: Please select some pipeline parameters
+    #   properties:
+    #     pipelineParameters:
+    #       title: Pipeline Parameters
+    #       type: object
+    #       properties:
+    #         name:
+    #           type: string
+    #         # id:
+    #         #   type: number
+    #         # foo:
+    #         #   type: string
+
+  steps:
+    - name: Read Humanitec Environment
+      id: environment
+      action: humanitec:get-environment
+
+    - id: fetch-base
+      name: Fetch Repo Contents
+      action: fetch:template
+      input:
+        url: ./content
+        values:
+          name: ${{ parameters.componentName }}
+          image: ${{ parameters.componentName }}
+          orgId: ${{ steps.environment.output.orgId }}
+          cloudProvider: ${{ steps.environment.output.cloudProvider }}
+
+    - id: create-ecr
+      name: Create ECR Repository
+      action: aws:ecr:create
+      input:
+        repoName: ${{ parameters.componentName }}
+        tags: ${{parameters.Tags}}
+        imageMutability: ${{parameters.ImageMutability}}
+        scanOnPush: ${{parameters.ScanOnPush}}
+        region: ${{parameters.Region}}
+
+    # - id: publish
+    #   name: Publish
+    #   action: publish:azure
+    #   input:
+    #     allowedHosts: ['dev.azure.com']
+    #     defaultBranch: main
+    #     description: This is ${{ parameters.componentName }}
+    #     repoUrl: dev.azure.com?organization=jaaechev&project=bancolombiaTests&repo=${{ parameters.componentName }}
+
+    - id: publish
+      name: Create DevOps Repository
+      action: publish:azure
+      input:
+        allowedHosts: ["dev.azure.com"]
+        defaultBranch: main
+        description: This is ${{ parameters.componentName }}
+        repoUrl: dev.azure.com?organization=jaaechev&project=bancolombiaTests&repo=${{ parameters.componentName }}
+    
+    # - id: createAzurePipeline
+    #   name: Create Azure Pipeline
+    #   action: azure:pipeline:create
+    #   input:
+    #     organization: ${{ (parameters.repoUrl | parseRepoUrl)['organization'] }}
+    #     project: ${{ (parameters.repoUrl | parseRepoUrl)['project'] }}
+    #     folder: "my-azure-pipelines-folder"
+    #     name: ${{ parameters.componentName }}
+    #     repositoryId: ${{ steps.publish.output.repositoryId }}
+    #     repositoryName: ${{ (parameters.repoUrl | parseRepoUrl)['repo'] }}
+    #     yamlPath: ./azure-pipeline.yaml
+
+    - id: createAzurePipeline
+      name: Create Azure Pipeline
+      action: azure:pipeline:create
+      input:
+        organization: jaaechev
+        project: bancolombiaTests
+        folder: "my-azure-pipelines-folder"
+        name: ${{ parameters.componentName }}
+        repositoryId: ${{ steps.publish.output.repositoryId }}
+        repositoryName: ${{ parameters.componentName }}
+        yamlPath: ./azure-pipeline.yaml
+    
+    - id: permitAzurePipeline
+      name: Change Azure Pipeline Permissions
+      action: azure:pipeline:permit
+      input:
+        organization: jaaechev
+        project: bancolombiaTests
+        resourceId: '1'
+        resourceType: variablegroup
+        authorized: true
+        pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
+
+    - id: humanitec-create-app
+      name: Create Humanitec App
+      action: humanitec:create-app
+      input:
+        appId: ${{ parameters.componentName }}
+
+    # - id: runAzurePipeline
+    #   name: Run Azure Pipeline
+    #   action: azure:pipeline:run
+    #   input:
+    #     organization: ${{ (parameters.repoUrl | parseRepoUrl)['organization'] }}
+    #     pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
+    #     project: ${{ (parameters.repoUrl | parseRepoUrl)['project'] }}
+
+    - id: runAzurePipeline
+      name: Run Azure Pipeline
+      action: azure:pipeline:run
+      input:
+        organization: jaaechev
+        pipelineId: ${{ steps.createAzurePipeline.output.pipelineId }}
+        project: bancolombiaTests
+
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps['publish'].output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}
+      - title: Azure Pipeline
+        url: ${{ steps.createAzurePipeline.output.pipelineUrl }}

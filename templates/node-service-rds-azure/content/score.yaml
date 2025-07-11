@@ -1,0 +1,38 @@
+apiVersion: score.dev/v1b1
+
+metadata:
+  name: node-workload-rds
+
+# Define the ports that this service exposes
+service:
+  ports:
+    www:
+      port: 8080
+      targetPort: 3000
+
+# Define the containers that make up this service
+containers:
+  node-service:
+    image: "271590248982.dkr.ecr.us-east-1.amazonaws.com/#{Build.Repository.Name}#:#{Build.BuildId}#"
+    variables:
+      PORT: "3000"
+      MESSAGE: "Hello, EVC Ingenieria Plataforma y Arquitectura de software! from backstage"
+      DB_DATABASE: ${resources.db.name}
+      DB_USER: ${resources.db.username}
+      DB_PASSWORD: ${resources.db.password}
+      DB_HOST: ${resources.db.host}
+      DB_PORT: ${resources.db.port}
+
+# Define the resources that this service needs
+resources:
+  dns: # We need a DNS record to point to the service 
+    type: dns
+  route:
+    type: route
+    params:
+      host: ${resources.dns.host}
+      path: /
+      port: 8080
+  db:  # We need a database to store data
+    type: postgres
+    class: rds
