@@ -44,6 +44,7 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs/alpha'));
 backend.add(import('@backstage/plugin-scaffolder-backend/alpha'));
 backend.add(import('@backstage/plugin-scaffolder-backend-module-github'));
 backend.add(import('@backstage/plugin-scaffolder-backend-module-gitea'));
+backend.add(import('@backstage/plugin-scaffolder-backend-module-azure'));
 //actions
 backend.add(scaffolderModuleAzurePipelinesActions);
 // backend.add(import('@aws/aws-core-plugin-for-backstage-scaffolder-actions'));
